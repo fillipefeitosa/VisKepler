@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <link rel="stylesheet" href="./assets/styles.css">
+  <title>DemoDash Nacional</title>
+  <script>
+    function changeMap(url) {
+      document.getElementById('mapFrame').src = url;
+    }
+  </script>
+</head>
+
+<body>
+  <main class="container">
+    <nav>
+      <ul>
+        <li><strong>DSS-LAB: Evolução Demográfica</strong></li>
+      </ul>
+      <ul>
+
+        <a href="#" role="button" class="outline" data-target="modal-info" onclick="toggleModal(event)"
+          style="margin-right: 10%;">INFO</a>
+        <span></span>
+        <a href="#" role="button" class="outline" data-target="modal-data">DADOS</a>
+      </ul>
+      <ul>
+        <li><a onclick="changeMap('url-to-map')">Regiões</a></li>
+        <li><a onclick="changeMap('http://127.0.0.1:8052/')">Municípios</a></li>
+        <li><a onclick="changeMap('url-to-map')">Freguesias</a></li>
+        <!-- <button onclick="changeMap('url-to-map-2')">Regiões</button>
+        <button onclick="changeMap('http://127.0.0.1:8052/')">Municípios</button> -->
+      </ul>
+
+    </nav>
+    <div class="iframe-container">
+      <iframe id="mapFrame" src="url-to-initial-map" class="map-iframe"></iframe>
+    </div>
+  </main>
+
+
+
+  <!-- Modal -->
+  <dialog id="modal-info">
+    <article>
+      <a href="#close" aria-label="Close" class="close" data-target="modal-info" onClick=" toggleModal(event)">
+      </a>
+      <h3>Instruções</h3>
+      <p>
+        Neste sistema, você pode explorar mapas em três diferentes escalas: Regiões (NUTS3), Municípios (NUTS4) e
+        Freguesias (NUTS5). Utilize os botões à direita para selecionar a escala desejada. Se precisar de mais
+        informações ou bases de dados, clique no botão "Dados" para fazer o download. Você também pode fazer upload dos
+        seus próprios dados para compará-los com os dados disponíveis.
+        <hr>
+        Lembre-se das funcionalidades essenciais do KeplerGL ao utilizar este sistema. Você pode personalizar a
+        visualização do mapa, filtrar dados, explorar diferentes camadas e salvar seu trabalho em diferentes formatos.
+      </p>
+      <footer>
+        <a href="#cancel" role="button" class="secondary" data-target="modal-info" onClick=" toggleModal(event)">
+          Cancel
+        </a>
+        <a href="#confirm" role="button" data-target="modal-info" onClick=" toggleModal(event)">
+          Confirm
+        </a>
+      </footer>
+    </article>
+  </dialog>
+  <script src="./assets/modal.js"></script>
+</body>
+
+</html>
