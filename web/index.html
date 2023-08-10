@@ -28,8 +28,8 @@
         <a href="#" role="button" class="outline" data-target="modal-data">DADOS</a>
       </ul>
       <ul>
-        <li><a onclick="changeMap('url-to-map')">Regiões</a></li>
-        <li><a onclick="changeMap('http://127.0.0.1:8052/')">Municípios</a></li>
+        <li><a onclick="changeMap('http://127.0.0.1:8050/nuts3')">Regiões</a></li>
+        <li><a onclick="changeMap('http://127.0.0.1:8050/nuts4')">Municípios</a></li>
         <li><a onclick="changeMap('url-to-map')">Freguesias</a></li>
         <!-- <button onclick="changeMap('url-to-map-2')">Regiões</button>
         <button onclick="changeMap('http://127.0.0.1:8052/')">Municípios</button> -->
@@ -43,7 +43,7 @@
 
 
 
-  <!-- Modal -->
+  <!-- Modal-Info -->
   <dialog id="modal-info">
     <article>
       <a href="#close" aria-label="Close" class="close" data-target="modal-info" onClick=" toggleModal(event)">
@@ -59,11 +59,8 @@
         visualização do mapa, filtrar dados, explorar diferentes camadas e salvar seu trabalho em diferentes formatos.
       </p>
       <footer>
-        <a href="#cancel" role="button" class="secondary" data-target="modal-info" onClick=" toggleModal(event)">
-          Cancel
-        </a>
         <a href="#confirm" role="button" data-target="modal-info" onClick=" toggleModal(event)">
-          Confirm
+          Fechar
         </a>
       </footer>
     </article>
