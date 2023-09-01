@@ -126,7 +126,7 @@ config_nuts4 = {
             "latitude": 39.05464932813073,
             "longitude": -8.96162241262812,
             "pitch": 50,
-            "zoom": 7.1993197684515255,
+            "zoom": 6.9,
             "isSplit": False,
         },
         "mapStyle": {
