@@ -30,14 +30,14 @@
       <ul>
         <li><a onclick="changeMap('http://127.0.0.1:8050/nuts3')">Regiões</a></li>
         <li><a onclick="changeMap('http://127.0.0.1:8050/nuts4')">Municípios</a></li>
-        <li><a onclick="changeMap('url-to-map')">Freguesias</a></li>
+        <!-- <li><a onclick="changeMap('url-to-map')">Freguesias</a></li> -->
         <!-- <button onclick="changeMap('url-to-map-2')">Regiões</button>
         <button onclick="changeMap('http://127.0.0.1:8052/')">Municípios</button> -->
       </ul>
 
     </nav>
     <div class="iframe-container">
-      <iframe id="mapFrame" src="url-to-initial-map" class="map-iframe"></iframe>
+      <iframe id="mapFrame" src="http://127.0.0.1:8050/nuts4" class="map-iframe"></iframe>
     </div>
   </main>
 
@@ -50,13 +50,16 @@
       </a>
       <h3>Instruções</h3>
       <p>
-        Neste sistema, você pode explorar mapas em três diferentes escalas: Regiões (NUTS3), Municípios (NUTS4) e
-        Freguesias (NUTS5). Utilize os botões à direita para selecionar a escala desejada. Se precisar de mais
+        Neste sistema, você pode explorar mapas em três diferentes escalas: Regiões (NUTS3) e Municípios (NUTS4).
+        Utilize os botões à direita para selecionar a escala desejada. Se precisar de mais
         informações ou bases de dados, clique no botão "Dados" para fazer o download. Você também pode fazer upload dos
         seus próprios dados para compará-los com os dados disponíveis.
         <hr>
         Lembre-se das funcionalidades essenciais do KeplerGL ao utilizar este sistema. Você pode personalizar a
         visualização do mapa, filtrar dados, explorar diferentes camadas e salvar seu trabalho em diferentes formatos.
+        <hr>
+        Para informações mais detalhadas, acerca das Freguesias (Nuts 5) consulte o <a
+          href="https://dcspt-drivitup.ua.pt/demodash/">DemoDash</a>.
       </p>
       <footer>
         <a href="#confirm" role="button" data-target="modal-info" onClick=" toggleModal(event)">
