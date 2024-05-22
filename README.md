@@ -27,7 +27,9 @@ Check live examples:
 2. **Development:**
    We recomend using conda, mamba or micromamba
    
-
+   ```shell
+   mamba env create -f environment.yml
+   ```
 3. To contribute:
    New libs versions must come without hash
    ```shell
