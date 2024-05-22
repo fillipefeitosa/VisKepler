@@ -1,33 +1,35 @@
-# Population Analysis with Geospatial Data
+# VisKepler - A Generic Geospatial Data Visualization Dashboard
 
-This Jupyter Notebook provides an analysis of population data using geospatial data visualization techniques. It showcases the usage of various libraries in Python to perform the analysis and create visualizations.
+This project provides a framework for analyzing and visualizing geospatial data using KeplerGl and other data visualization libraries. Users can upload their own KeplerGl JSON configurations and GeoJSON files to create interactive dashboards.
 
 ## Libraries Used
 
-- KeplerGl: An interactive geospatial visualization library.
-- Pandas: A powerful data manipulation and analysis library.
-- Geopandas: A library for working with geospatial data in Python.
-- Matplotlib: A plotting library for creating static visualizations.
-- Seaborn: A Python data visualization library based on Matplotlib.
+- **KeplerGl:** Interactive geospatial visualization library.
+- **Pandas:** Data manipulation and analysis library.
+- **Geopandas:** For working with geospatial data.
+- **Matplotlib:** Static visualizations.
+- **Seaborn:** Data visualization library based on Matplotlib.
+- **FastAPI:** For creating the web application to serve the dashboard.
 
 ## About
 
-This project is related to the **GETIN** project from Universidade de Aveiro. It explores population data and utilizes geospatial analysis to gain insights into population trends and patterns.
+This project originated from the **GETIN** project at Universidade de Aveiro, focusing on demographic data. It has been refactored to support generic use cases, allowing users to deploy their own data and visualizations.
 
-## Dashboard
-
-For a more interactive and visual representation of the data, an interactive dashboard is available at [https://dcstp-drivitup.ua.pt/demodash/](https://dcstp-drivitup.ua.pt/demodash/). The dashboard provides a user-friendly interface to explore the population analysis results.
+Check live examples:
+[Portuguese Demographic Data](https://dcspt-getin.ua.pt/kepler-pt-demo/)
 
 ## Instructions
-
-1. Install the required libraries using the following command:
-
+1. **Deploy-ready version**:
+   Contains the fastapi server, ready to be served under a reverse-proxy (like caddy or nginx)
    ```shell
-   pip install keplergl pandas geopandas matplotlib seaborn
+   docker pull fillipefeitosa/viskepler:latest
    ```
+2. **Development:**
+   We recomend using conda, mamba or micromamba
+   
 
-## Aditional Notes
-
-    The notebook uses geospatial data in the form of shapefiles. Make sure you have the necessary shapefiles or update the code accordingly to use your own geospatial data.
-
-    If you have any questions or feedback, please contact the project team.
+3. To contribute:
+   New libs versions must come without hash
+   ```shell
+   conda env export --no-builds > environment.yml
+   ```
