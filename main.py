@@ -1,7 +1,8 @@
 import uvicorn
 from keplergl import KeplerGl
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 import map.shared as shared
 
 # ---- Kepler Configurations ----
@@ -34,7 +35,15 @@ def create_kepler_map(data, config):
 
 # ---- API ENTRYPOINT ----
 
-app = FastAPI()
+app = FastAPI(root_path="/kepler-pt-demo")
+
+
+app.mount("/assets", StaticFiles(directory="web/assets"), name="assets")
+
+
+@app.get("/")
+async def root():
+    return FileResponse("./web/index.html")
 
 
 @app.get("/nuts4")
@@ -52,4 +61,4 @@ async def nuts3():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8889, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8050, reload=True)
