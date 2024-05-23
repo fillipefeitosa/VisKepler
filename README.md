@@ -19,6 +19,7 @@ Check live examples:
 [Portuguese Demographic Data](https://dcspt-getin.ua.pt/kepler-pt-demo/)
 
 ## Instructions
+
 1. **Deploy-ready version**:
    Contains the fastapi server, ready to be served under a reverse-proxy (like caddy or nginx)
    ```shell
@@ -26,10 +27,13 @@ Check live examples:
    ```
 2. **Development:**
    We recomend using conda, mamba or micromamba
-   
+
    ```shell
    mamba env create -f environment.yml
+   mamba activate viskepler
+   uvicorn --host 0.0.0.0 --port 8050 --reload main:app
    ```
+
 3. To contribute:
    New libs versions must come without hash
    ```shell
