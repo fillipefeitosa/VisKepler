@@ -58,7 +58,7 @@
       background-color: #34495e;
     }
 
-    .fa-map {
+    .fa {
       margin-right: 8px;
     }
 
@@ -94,6 +94,11 @@
       display: none;
       /* hide text when sidebar is collapsed */
     }
+
+    .divider {
+      border-bottom: 1px solid #34495e;
+      margin: 10px;
+    }
   </style>
 </head>
 
@@ -111,6 +116,9 @@
         </li>
         <li><a href="#" onclick="changeMap('nuts4')"><i class="fa fa-map"></i><span
               class="link-text">Municípios</span></a></li>
+        <li class="divider"></li>
+        <li><a href="#" onclick="showinfo()"><i class="fa fa-circle-info"></i><span class="link-text">Info</span></a>
+        </li>
       </ul>
     </div>
     <div class="map-container">
