@@ -9,6 +9,10 @@ import map.shared as shared
 from map.config_nuts4 import config_nuts4
 from map.config_nuts3 import config_nuts3
 
+# Next Changes
+# 1. Load kepler configurations available
+# 2. Load the geojsons available
+
 
 def get_dataId_from_config(config):
     # Uses KeplerGl config to get the dataId. Can return multiple dataIds
