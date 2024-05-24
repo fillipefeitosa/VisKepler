@@ -2,73 +2,137 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-  <link rel="stylesheet" href="assets/styles.css">
-  <title>DemoDash Nacional</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans&display=swap"
+    rel="stylesheet">
+  <style>
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    .container {
+      display: flex;
+      height: 100%;
+    }
+
+    .sidebar {
+      width: 20%;
+      background: #29323C;
+      padding: 0.5rem;
+      overflow-y: auto;
+      position: relative;
+      transition: width 0.3s ease;
+    }
+
+    .map-container {
+      flex-grow: 1;
+    }
+
+    .map-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    ul {
+      padding: 0;
+      list-style: none;
+      margin-top: 0;
+    }
+
+    li a {
+      text-decoration: none;
+      color: #D8D9DB;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      transition: background-color 0.3s;
+    }
+
+    li a:hover {
+      background-color: #34495e;
+    }
+
+    .fa-map {
+      margin-right: 8px;
+    }
+
+    .title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+    }
+
+    .title {
+      font-family: 'Montserrat', sans-serif;
+      color: #1FBAD6;
+      font-size: 0.85em;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .toggle-btn {
+      background: none;
+      border: none;
+      color: #D8D9DB;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .link-text {
+      display: block;
+      /* default visible */
+    }
+
+    .sidebar.collapsed .link-text {
+      display: none;
+      /* hide text when sidebar is collapsed */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <div class="title-bar">
+        <strong class="title link-text">DSS-LAB</strong>
+        <button class="toggle-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i> <!-- Hamburger Icon -->
+        </button>
+      </div>
+      <ul>
+        <li><a href="#" onclick="changeMap('nuts3')"><i class="fa fa-map"></i><span class="link-text">Regiões</span></a>
+        </li>
+        <li><a href="#" onclick="changeMap('nuts4')"><i class="fa fa-map"></i><span
+              class="link-text">Municípios</span></a></li>
+      </ul>
+    </div>
+    <div class="map-container">
+      <iframe id="mapFrame" src="nuts4" class="map-iframe"></iframe>
+    </div>
+  </div>
   <script>
     function changeMap(url) {
       document.getElementById('mapFrame').src = url;
     }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar.style.width === '5%') {
+        sidebar.style.width = '20%';
+        sidebar.classList.remove('collapsed');
+      } else {
+        sidebar.style.width = '5%';
+        sidebar.classList.add('collapsed');
+      }
+    }
   </script>
-</head>
-
-<body>
-  <main class="container">
-    <nav>
-      <ul>
-        <li><strong>DSS-LAB: Evolução Demográfica</strong></li>
-      </ul>
-      <ul>
-
-        <a href="#" role="button" class="outline" data-target="modal-info" onclick="toggleModal(event)"
-          style="margin-right: 10%;">INFO</a>
-        <span></span>
-        <a href="#" role="button" class="outline" data-target="modal-data">DADOS</a>
-      </ul>
-      <ul>
-        <li><a onclick="changeMap('nuts4')">Municípios</a></li>
-        <li><a onclick="changeMap('nuts3')">Regiões</a></li>
-        <!-- <li><a onclick="changeMap('url-to-map')">Freguesias</a></li> -->
-        <!-- <button onclick="changeMap('url-to-map-2')">Regiões</button>
-        <button onclick="changeMap('http://127.0.0.1:8052/')">Municípios</button> -->
-      </ul>
-
-    </nav>
-    <div class="iframe-container">
-      <iframe id="mapFrame" src="nuts4" class="map-iframe"></iframe>
-    </div>
-  </main>
-
-
-
-  <!-- Modal-Info -->
-  <dialog id="modal-info">
-    <article>
-      <a href="#close" aria-label="Close" class="close" data-target="modal-info" onClick=" toggleModal(event)">
-      </a>
-      <h3>Instruções</h3>
-      <p>
-        Neste sistema, você pode explorar mapas em três diferentes escalas: Regiões (NUTS3) e Municípios (NUTS4).
-        Utilize os botões à direita para selecionar a escala desejada. Se precisar de mais
-        informações ou bases de dados, clique no botão "Dados" para fazer o download. Você também pode fazer upload dos
-        seus próprios dados para compará-los com os dados disponíveis.
-        <hr>
-        Lembre-se das funcionalidades essenciais do KeplerGL ao utilizar este sistema. Você pode personalizar a
-        visualização do mapa, filtrar dados, explorar diferentes camadas e salvar seu trabalho em diferentes formatos.
-        <hr>
-        Para informações mais detalhadas, acerca das Freguesias (Nuts 5) consulte o <a
-          href="https://dcspt-drivitup.ua.pt/demodash/">DemoDash</a>.
-      </p>
-      <footer>
-        <a href="#confirm" role="button" data-target="modal-info" onClick=" toggleModal(event)">
-          Fechar
-        </a>
-      </footer>
-    </article>
-  </dialog>
-  <script src="assets/modal.js"></script>
 </body>
 
 </html>
