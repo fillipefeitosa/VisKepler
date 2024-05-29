@@ -3,15 +3,21 @@ from keplergl import KeplerGl
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import map.shared as shared
+import config.shared as shared
 
 # ---- Kepler Configurations ----
-from map.config_nuts4 import config_nuts4
-from map.config_nuts3 import config_nuts3
+from config.config_nuts4 import config_nuts4
+from config.config_nuts3 import config_nuts3
+
+# ---- Map files
+import data.read_files_from_path as read_files
 
 # Next Changes
-# 1. Load kepler configurations available
-# 2. Load the geojsons available
+# 1. Load kepler configurations available - ok
+# 2. Load the geojsons available - ok - I can read the geojsons name
+# - Now I need to to read the available config.jsons
+# - Finally, I will need to create a general config file, that 
+# will link the geojsons with their configurations
 
 
 def get_dataId_from_config(config):
@@ -49,6 +55,11 @@ app.mount("/assets", StaticFiles(directory="web/assets"), name="assets")
 async def root():
     return FileResponse("./web/index.html")
 
+@app.get("/get_files_names")
+async def get_files_names():
+    files_names = read_files("./data")
+    return {"files": files_names}
+    
 
 @app.get("/nuts4")
 async def nuts4():

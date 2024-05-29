@@ -1,1 +1,3 @@
-data/
+data/*.geojson
+**/__pycache__/
+config/*.json
