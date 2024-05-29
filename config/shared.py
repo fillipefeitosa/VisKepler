@@ -1,4 +1,5 @@
 import json
+import os
 import geopandas as gpd
 from os import listdir
 from os.path import isfile, join
@@ -10,29 +11,20 @@ data = None
 # available. 
 
 # Get the list of configuration files
-def read_configs():
-    config_path = '.'
+def read_configs(config_path):
     only_files = [f for f in listdir(config_path) if isfile(join(config_path, f))]
     # filter json files
-    json_files = [f for f in only_files if f.lower.endswith('.json')]
-    return json_files
-
-# Read each config file
-def load_configs():
-    config_files = read_configs()
-    for e in config_files:
-        with open(e) as f:
-            conf = json.load(f)
-            
-            
-
-def load_data_nuts_3():
-    global data
-    data = gpd.read_file("./data/demographic_2020_2030_2040_regions.geojson")
-    return data
-
+    json_files = [f for f in only_files if f.lower().endswith('.json')]
+    configs = []
+    
+    for json_file in json_files:
+        with open(os.path.join(config_path, json_file), 'r') as f:
+            config = json.load(f)
+            configs.append(config)
+    return configs
+    
 
 def load_data_nuts_4():
     global data
-    data = gpd.read_file("./data/demographic_2020_2030_2040_mun.geojson")
+    data = gpd.read_file("./data/rs1hiroye.geojson")
     return data

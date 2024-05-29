@@ -1,0 +1,15 @@
+import numpy as np
+
+def convert_numpy_types(data):
+    if isinstance(data, dict):
+        return {k: convert_numpy_types(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [convert_numpy_types(v) for v in data]
+    elif isinstance(data, np.integer):
+        return int(data)
+    elif isinstance(data, np.floating):
+        return float(data)
+    elif isinstance(data, np.ndarray):
+        return data.tolist()
+    else:
+        return data
