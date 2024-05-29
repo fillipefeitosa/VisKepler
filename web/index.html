@@ -111,18 +111,12 @@
           <i class="fas fa-bars"></i> <!-- Hamburger Icon -->
         </button>
       </div>
-      <ul>
-        <li><a href="#" onclick="changeMap('nuts3')"><i class="fa fa-map"></i><span class="link-text">Regiões</span></a>
-        </li>
-        <li><a href="#" onclick="changeMap('nuts4')"><i class="fa fa-map"></i><span
-              class="link-text">Municípios</span></a></li>
-        <li class="divider"></li>
-        <li><a href="#" onclick="showinfo()"><i class="fa fa-circle-info"></i><span class="link-text">Info</span></a>
-        </li>
+      <ul id="sidebar-links">
+        <!-- Links will be populated here by JavaScript -->
       </ul>
     </div>
     <div class="map-container">
-      <iframe id="mapFrame" src="nuts4" class="map-iframe"></iframe>
+      <iframe id="mapFrame" src="" class="map-iframe"></iframe>
     </div>
   </div>
   <script>
@@ -140,6 +134,50 @@
         sidebar.classList.add('collapsed');
       }
     }
+
+    async function fetchConfig() {
+      try {
+        const response = await fetch('/get_config');
+        const data = await response.json();
+        const sidebarLinks = document.getElementById('sidebar-links');
+
+        if (data.maps.length > 0) {
+          // Set the first map to load by default
+          changeMap(data.maps[0].link);
+        }
+
+        data.maps.forEach(map => {
+          const listItem = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#';
+          link.onclick = () => changeMap(map.link);
+          link.innerHTML = `<i class="fa fa-map"></i><span class="link-text">${map.data_id}</span>`;
+          listItem.appendChild(link);
+          sidebarLinks.appendChild(listItem);
+        });
+
+        const divider = document.createElement('li');
+        divider.className = 'divider';
+        sidebarLinks.appendChild(divider);
+
+        const infoItem = document.createElement('li');
+        const infoLink = document.createElement('a');
+        infoLink.href = '#';
+        infoLink.onclick = showInfo;
+        infoLink.innerHTML = '<i class="fa fa-circle-info"></i><span class="link-text">Info</span>';
+        infoItem.appendChild(infoLink);
+        sidebarLinks.appendChild(infoItem);
+
+      } catch (error) {
+        console.error('Error fetching config:', error);
+      }
+    }
+
+    function showInfo() {
+      alert('Information about the maps will be shown here.');
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchConfig);
   </script>
 </body>
 
