@@ -1,0 +1,24 @@
+{
+  "siteTitle": "DSS-LAB",
+  "websiteTitle": "My SisKepler App",
+  "maps": [
+    {
+      "data_id": "rowek3uu",
+      "label": "Portuguese Demography - Regions",
+      "geojson_file": "rowek3uu.geojson",
+      "link": "/rowek3uu"
+    },
+    {
+      "data_id": "rs1hiroye",
+      "label": "Portuguese Demography - Municipalities",
+      "geojson_file": "rs1hiroye.geojson",
+      "link": "/rs1hiroye"
+    },
+    {
+      "data_id": "zp0qz",
+      "label": "Brazil - Coverage of UBS",
+      "geojson_file": "zp0qz.geojson",
+      "link": "/zp0qz"
+    }
+  ]
+}

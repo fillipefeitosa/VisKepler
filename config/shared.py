@@ -1,14 +1,7 @@
 import json
 import os
-import geopandas as gpd
 from os import listdir
 from os.path import isfile, join
-
-# Global variable to store data from every different source
-data = None
-
-# I want to make this script read all configuration files
-# available.
 
 
 # Get the list of configuration files
@@ -23,12 +16,6 @@ def read_configs(config_path):
             config = json.load(f)
             configs.append(config)
     return configs
-
-
-def load_data_nuts_4():
-    global data
-    data = gpd.read_file("./data/rs1hiroye.geojson")
-    return data
 
 
 def load_user_config():
