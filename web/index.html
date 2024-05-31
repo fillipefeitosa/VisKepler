@@ -107,7 +107,7 @@
   <div class="container">
     <div class="sidebar" id="sidebar">
       <div class="title-bar">
-        <strong class="title link-text">DSS-LAB</strong>
+        <strong class="title link-text" id="site-title">DSS-LAB</strong>
         <button class="toggle-btn" onclick="toggleSidebar()">
           <i class="fas fa-bars"></i> <!-- Hamburger Icon -->
         </button>
@@ -140,6 +140,7 @@
       try {
         const response = await fetch('/get_config');
         const data = await response.json();
+        document.getElementById('site-title').innerText = data.siteTitle;
         const sidebarLinks = document.getElementById('sidebar-links');
 
         if (data.maps.length > 0) {
@@ -152,7 +153,7 @@
           const link = document.createElement('a');
           link.href = '#';
           link.onclick = () => changeMap(map.link);
-          link.innerHTML = `<i class="fa fa-map"></i><span class="link-text">${map.data_id}</span>`;
+          link.innerHTML = `<i class="fa fa-map"></i><span class="link-text">${map.label}</span>`;
           listItem.appendChild(link);
           sidebarLinks.appendChild(listItem);
         });
