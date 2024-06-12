@@ -75,7 +75,9 @@ populate_config()
 
 # ---- API ENTRYPOINT ----
 
-app = FastAPI(root_path="/kepler-pt-demo")
+# When using behind a reverse proxy with subdirectory
+# app = FastAPI(root_path="/subdirectory_address")
+app = FastAPI()
 
 
 app.mount("/assets", StaticFiles(directory="web/assets"), name="assets")
