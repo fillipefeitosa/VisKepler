@@ -1,0 +1,24 @@
+{
+  "siteTitle": "VisKepler",
+  "websiteTitle": "My SisKepler App",
+  "maps": [
+    {
+      "data_id": "rowek3uu",
+      "label": "Portuguese Demography - Municipalities",
+      "geojson_file": "rowek3uu.geojson",
+      "link": "/rowek3uu"
+    },
+    {
+      "data_id": "rs1hiroye",
+      "label": "Portuguese Demography - Regions",
+      "geojson_file": "rs1hiroye.geojson",
+      "link": "/rs1hiroye"
+    },
+    {
+      "data_id": "61yujy",
+      "label": "Brazil - Coverage of UBS",
+      "geojson_file": "61yujy.geojson",
+      "link": "/61yujy"
+    }
+  ]
+}
