@@ -1,9 +1,12 @@
+import json
 import logging
 from keplergl import KeplerGl
-
+import geopandas as gpd
+import pandas as pd
 
 def get_dataId_from_config(config):
-    # Uses KeplerGl config to get the dataId. Can return multiple dataIds
+    if config is None:
+        return []
     data_ids = []
     layers = config.get("config", {}).get("visState", {}).get("layers", [])
     for layer in layers:
@@ -12,24 +15,34 @@ def get_dataId_from_config(config):
             data_ids.append(data_id)
     return data_ids
 
-
-# Set up logging
+# Configura o logging
 logging.basicConfig(level=logging.INFO)
 
+def convert_numpy_types(data):
+    if isinstance(data, pd.DataFrame):
+        return data.to_dict(orient='records')
+    elif isinstance(data, gpd.GeoDataFrame):
+        return json.loads(data.to_json())
+    else:
+        return data
 
-def create_kepler_map(data, config):
+def create_kepler_map(geojson_data, config, csv_data=None):
     try:
         dataIds = get_dataId_from_config(config)
-        # One day we might want to support multiple dataIds
-        if len(dataIds) != 1:
+        
+        if len(dataIds) not in [1, 2]:
             raise ValueError(
-                "Only one dataId allowed. You probably have multiple layers with different dataIds or no dataId at all."
+                "Esperado um ou dois dataId(s): um para geojson e opcionalmente um para csv."
             )
-        dataId = dataIds[0]
-        kepler_map = KeplerGl(config=config, data={dataId: data})
 
-        logging.info(f"KeplerGL map for dataId {dataId} successfully created.")
+        kepler_data = {dataIds[0]: convert_numpy_types(geojson_data)}
+        if csv_data is not None and len(dataIds) == 2:
+            kepler_data[dataIds[1]] = convert_numpy_types(csv_data)
+        
+        kepler_map = KeplerGl(config=config, data=kepler_data)
+        
+        logging.info(f"Mapa KeplerGL criado com sucesso para dataIds: {dataIds}.")
         return kepler_map._repr_html_()
     except Exception as e:
-        logging.error(f"Failed to create KeplerGL map: {e}")
+        logging.error(f"Falha ao criar o mapa KeplerGL: {e}")
         raise
