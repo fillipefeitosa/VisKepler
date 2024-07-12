@@ -30,9 +30,6 @@ const isModalOpen = (modal) => {
     : false;
 };
 
-
-
-
 // Custom modal functions
 function openModal() {
   document.getElementById('infoModal').style.display = "block";
@@ -41,15 +38,6 @@ function openModal() {
 function closeModal() {
   document.getElementById('infoModal').style.display = "none";
 }
-
-
-
-
-
-
-
-
-
 
 // Open modal
 const openModal = (modal) => {
@@ -120,5 +108,3 @@ const getScrollbarWidth = () => {
 const isScrollbarVisible = () => {
   return document.body.scrollHeight > screen.height;
 };
-
-
