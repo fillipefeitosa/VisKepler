@@ -1,9 +1,12 @@
+import json
 import logging
 from keplergl import KeplerGl
-
+import geopandas as gpd
+import pandas as pd
 
 def get_dataId_from_config(config):
-    # Uses KeplerGl config to get the dataId. Can return multiple dataIds
+    if config is None:
+        return []
     data_ids = []
     layers = config.get("config", {}).get("visState", {}).get("layers", [])
     for layer in layers:
@@ -12,24 +15,42 @@ def get_dataId_from_config(config):
             data_ids.append(data_id)
     return data_ids
 
-
-# Set up logging
+# Configura o logging
 logging.basicConfig(level=logging.INFO)
 
+def convert_numpy_types(data):
+    if isinstance(data, pd.DataFrame):
+        return data.to_dict(orient='records')
+    elif isinstance(data, gpd.GeoDataFrame):
+        return json.loads(data.to_json())
+    else:
+        return data
 
-def create_kepler_map(data, config):
+def create_kepler_map(geojson_data, config, csv_data=None):
     try:
-        dataIds = get_dataId_from_config(config)
-        # One day we might want to support multiple dataIds
-        if len(dataIds) != 1:
-            raise ValueError(
-                "Only one dataId allowed. You probably have multiple layers with different dataIds or no dataId at all."
-            )
-        dataId = dataIds[0]
-        kepler_map = KeplerGl(config=config, data={dataId: data})
+        kepler_data = {}
+        data_ids = get_dataId_from_config(config)
 
-        logging.info(f"KeplerGL map for dataId {dataId} successfully created.")
+        # Converta os dados para o formato adequado
+        if isinstance(geojson_data, gpd.GeoDataFrame):
+            geojson_data = convert_numpy_types(geojson_data)
+        if csv_data is not None and isinstance(csv_data, pd.DataFrame):
+            csv_data = convert_numpy_types(csv_data)
+
+        # Atribua os dados ao KeplerGL
+        if len(data_ids) == 1:
+            kepler_data[data_ids[0]] = geojson_data
+        elif len(data_ids) == 2 and csv_data is not None:
+            kepler_data[data_ids[0]] = geojson_data
+            kepler_data[data_ids[1]] = csv_data
+
+        print(f"Kepler data: {kepler_data}")
+        print(f"Kepler config: {config}")
+
+        kepler_map = KeplerGl(config=config, data=kepler_data)
+        
+        logging.info(f"Mapa KeplerGL criado com sucesso.")
         return kepler_map._repr_html_()
     except Exception as e:
-        logging.error(f"Failed to create KeplerGL map: {e}")
+        logging.error(f"Falha ao criar o mapa KeplerGL: {e}")
         raise
