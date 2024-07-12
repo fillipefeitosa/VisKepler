@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.css" rel="stylesheet">
   <link href="https://d1a3f4spazzrp4.cloudfront.net/kepler.gl/uber-fonts/4.0.0/superfine.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/styles.css">
   <style>
     body,
     html {
@@ -54,7 +55,6 @@
       padding: 10px;
       transition: background-color 0.3s;
       font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
-      /* Added to match Layers font */
     }
 
     li a:hover {
@@ -74,7 +74,6 @@
 
     .title {
       font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
-      /* Added to match Kepler.gl title font */
       color: #1FBAD6;
       font-size: 0.85em;
       letter-spacing: 0.05em;
@@ -91,17 +90,49 @@
 
     .link-text {
       display: block;
-      /* default visible */
     }
 
     .sidebar.collapsed .link-text {
       display: none;
-      /* hide text when sidebar is collapsed */
     }
 
     .divider {
       border-bottom: 1px solid #34495e;
       margin: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -112,76 +143,38 @@
       <div class="title-bar">
         <strong class="title link-text" id="site-title">DSS-LAB</strong>
         <button class="toggle-btn" onclick="toggleSidebar()">
-          <i class="fas fa-bars"></i> <!-- Hamburger Icon -->
+          <i class="fas fa-bars"></i>
         </button>
       </div>
       <ul id="sidebar-links">
         <!-- Links will be populated here by JavaScript -->
       </ul>
+      <button class="info-button" onclick="showMapInfo()">
+        <svg viewBox="0 0 64 64" width="18px" height="18px" style="fill: currentcolor;" class="data-ex-icons-docs">
+          <path d="M23.62,23.41a1,1,0,0,1,.39.08,1,1,0,0,0-.78,0A1,1,0,0,1,23.62,23.41Z"></path>
+          <path d="M32,57.5A24.83,24.83,0,1,1,56.83,32.67,24.86,24.86,0,0,1,32,57.5Zm0-44.86a20,20,0,1,0,20,20A20,20,0,0,0,32,12.64Z"></path>
+          <rect x="28.8" y="29.46" width="6.41" height="16.02" rx="1.6" ry="1.6"></rect>
+          <rect x="28.8" y="19.85" width="6.41" height="6.41" rx="1.6" ry="1.6"></rect>
+        </svg>
+      </button>
     </div>
     <div class="map-container">
       <iframe id="mapFrame" src="" class="map-iframe"></iframe>
     </div>
   </div>
+
+  <!-- The Modal -->
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 id="map-title">Map Info</h2>
+      <p id="map-description">Descrição do mapa será exibida aqui.</p>
+    </div>
+  </div>
+
+  <script src="/assets/scripts.js"></script>
+  <script src="/assets/modal.js"></script>
   <script>
-    function changeMap(url) {
-      document.getElementById('mapFrame').src = url;
-    }
-
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      if (sidebar.style.width === '5%') {
-        sidebar.style.width = '20%';
-        sidebar.classList.remove('collapsed');
-      } else {
-        sidebar.style.width = '5%';
-        sidebar.classList.add('collapsed');
-      }
-    }
-
-    async function fetchConfig() {
-      try {
-        const response = await fetch('/get_config');
-        const data = await response.json();
-        document.getElementById('site-title').innerText = data.siteTitle;
-        const sidebarLinks = document.getElementById('sidebar-links');
-
-        if (data.maps.length > 0) {
-          // Set the first map to load by default
-          changeMap(data.maps[0].link);
-        }
-
-        data.maps.forEach(map => {
-          const listItem = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = '#';
-          link.onclick = () => changeMap(map.link);
-          link.innerHTML = `<i class="fa fa-map"></i><span class="link-text">${map.label}</span>`;
-          listItem.appendChild(link);
-          sidebarLinks.appendChild(listItem);
-        });
-
-        const divider = document.createElement('li');
-        divider.className = 'divider';
-        sidebarLinks.appendChild(divider);
-
-        const infoItem = document.createElement('li');
-        const infoLink = document.createElement('a');
-        infoLink.href = '#';
-        infoLink.onclick = showInfo;
-        infoLink.innerHTML = '<i class="fa fa-circle-info"></i><span class="link-text">Info</span>';
-        infoItem.appendChild(infoLink);
-        sidebarLinks.appendChild(infoItem);
-
-      } catch (error) {
-        console.error('Error fetching config:', error);
-      }
-    }
-
-    function showInfo() {
-      alert('Information about the maps will be shown here.');
-    }
-
     document.addEventListener('DOMContentLoaded', fetchConfig);
   </script>
 </body>

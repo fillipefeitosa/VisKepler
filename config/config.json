@@ -3,22 +3,61 @@
   "websiteTitle": "My SisKepler App",
   "maps": [
     {
-      "data_id": "rowek3uu",
-      "label": "Portuguese Demography - Municipalities",
-      "geojson_file": "rowek3uu.geojson",
-      "link": "/rowek3uu"
+      "data_ids": {
+        "geojson_file": "mp4.geojson",
+        "csv_file": "UBS.csv"
+      },
+      "label": "Novo Mapa - mp4",
+      "link": "/mp4",
+      "description": "Este mapa mostra as unidades básicas de saúde (UBS) na área coberta pelo arquivo geojson mp4."
     },
     {
-      "data_id": "rs1hiroye",
-      "label": "Portuguese Demography - Regions",
-      "geojson_file": "rs1hiroye.geojson",
-      "link": "/rs1hiroye"
+      "data_ids": {
+        "geojson_file": "mp1.geojson"
+      },
+      "label": "Mapa - mp1",
+      "link": "/mp1",
+      "description": "Este mapa mostra as unidades básicas de saúde (UBS) na área coberta pelo arquivo geojson mp1."
     },
     {
-      "data_id": "61yujy",
-      "label": "Brazil - Coverage of UBS",
-      "geojson_file": "61yujy.geojson",
-      "link": "/61yujy"
+      "data_ids": {
+        "geojson_file": "mp2.geojson"
+      },
+      "label": "Mapa - mp2",
+      "link": "/mp2",
+      "description": "Este mapa mostra as unidades básicas de saúde (UBS) na área coberta pelo arquivo geojson mp2."
+    },
+    {
+      "data_ids": {
+        "csv_file": "mp5.csv"
+      },
+      "label": "Padrão de deslocamento diário na Inglaterra e no País de Gales",
+      "link": "/mp5",
+      "description": "Este conjunto de dados mostra a localização de residência e local de trabalho, com base no Censo de residência de 2011 da Inglaterra e País de Gales. Os dados classificam as pessoas atualmente residentes em cada área de superprodução da camada intermediária, ou área superior, e mostram o movimento entre sua área de residência e local de trabalho. Fonte de dados: Nomis"
+    },
+    {
+      "data_ids": {
+        "geojson_file": "mp6.geojson"
+      },
+      "label": "Contorno de elevação de São Francisco",
+      "link": "/mp6",
+      "description": "Este conjunto de dados contém contornos de elevação para o continente de São Francisco e Ilha do Tesouro/Ilha Yerba. Baseado no Datum de elevação de São Francisco. Fonte de dados: DataSF."
+    },
+    {
+      "data_ids": {
+        "geojson_file": "mp7.csv"
+      },
+      "label": "Terremotos na Califórnia",
+      "link": "/mp7",
+      "description": "O conjunto de dados contém uma lista de terremotos de magnitude 2,5+ na Califórnia. As informações foram geradas usando o site do USGS e contêm múltiplas propriedades (localização, magnitude, tipo magnético) para cada entrada. Fonte de dados: USGS"
+    },
+    {
+      "data_ids": {
+        "geojson_file": "mp8.geojson"
+      },
+      "label": "Todos os voos do mundo",
+      "link": "/mp8",
+      "description": "O conjunto de dados contém dados de duas horas de voo coletados usando a API ao vivo da OpenSky Network. A cor dos voos é baseada no país de origem. 18 mil voos são registrados durante o período de duas horas. O caminho cai sobre os mares devido à falta de cobertura de satélite. As informações da companhia aérea são adicionadas a cada voo juntando-se aos dados de Airlinescodes.co.uk"
     }
   ]
 }

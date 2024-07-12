@@ -1,0 +1,214 @@
+{
+  "version": "v1",
+  "config": {
+    "visState": {
+      "filters": [],
+      "layers": [
+        {
+          "id": "v2vg79a",
+          "type": "hexbin",
+          "config": {
+            "dataId": "UBS.csv",
+            "label": "Hexagon",
+            "color": [130, 154, 227],
+            "highlightColor": [252, 242, 26, 255],
+            "columns": {
+              "lat": "LATITUDE",
+              "lng": "LONGITUDE"
+            },
+            "isVisible": true,
+            "visConfig": {
+              "opacity": 0.8,
+              "worldUnitSize": 17.5879,
+              "resolution": 8,
+              "colorRange": {
+                "name": "Global Warming",
+                "type": "sequential",
+                "category": "Uber",
+                "colors": [
+                  "#5A1846",
+                  "#900C3F",
+                  "#C70039",
+                  "#E3611C",
+                  "#F1920E",
+                  "#FFC300"
+                ]
+              },
+              "coverage": 1,
+              "sizeRange": [0, 500],
+              "percentile": [0, 100],
+              "elevationPercentile": [0, 100],
+              "elevationScale": 78.4,
+              "enableElevationZoomFactor": true,
+              "colorAggregation": "count",
+              "sizeAggregation": "count",
+              "enable3d": true
+            },
+            "hidden": false,
+            "textLabel": [
+              {
+                "field": null,
+                "color": [255, 255, 255],
+                "size": 18,
+                "offset": [0, 0],
+                "anchor": "start",
+                "alignment": "center"
+              }
+            ]
+          },
+          "visualChannels": {
+            "colorField": null,
+            "colorScale": "quantile",
+            "sizeField": null,
+            "sizeScale": "linear"
+          }
+        },
+        {
+          "id": "th19v5p",
+          "type": "geojson",
+          "config": {
+            "dataId": "mp4.geojson",
+            "label": "new dataset",
+            "color": [255, 203, 153],
+            "highlightColor": [252, 242, 26, 255],
+            "columns": {
+              "geojson": "_geojson"
+            },
+            "isVisible": true,
+            "visConfig": {
+              "opacity": 0.8,
+              "strokeOpacity": 0.8,
+              "thickness": 0.5,
+              "strokeColor": [248, 149, 112],
+              "colorRange": {
+                "name": "ColorBrewer PiYG-4",
+                "type": "diverging",
+                "category": "ColorBrewer",
+                "colors": [
+                  "#d01c8b",
+                  "#f1b6da",
+                  "#b8e186",
+                  "#4dac26"
+                ]
+              },
+              "strokeColorRange": {
+                "name": "Global Warming",
+                "type": "sequential",
+                "category": "Uber",
+                "colors": [
+                  "#5A1846",
+                  "#900C3F",
+                  "#C70039",
+                  "#E3611C",
+                  "#F1920E",
+                  "#FFC300"
+                ]
+              },
+              "radius": 10,
+              "sizeRange": [0, 10],
+              "radiusRange": [0, 50],
+              "heightRange": [0, 500],
+              "elevationScale": 5,
+              "enableElevationZoomFactor": true,
+              "stroked": true,
+              "filled": true,
+              "enable3d": false,
+              "wireframe": false
+            },
+            "hidden": false,
+            "textLabel": [
+              {
+                "field": null,
+                "color": [255, 255, 255],
+                "size": 18,
+                "offset": [0, 0],
+                "anchor": "start",
+                "alignment": "center"
+              }
+            ]
+          },
+          "visualChannels": {
+            "colorField": {
+              "name": "UBS_por_1000_Habitantes",
+              "type": "real"
+            },
+            "colorScale": "quantile",
+            "strokeColorField": null,
+            "strokeColorScale": "quantile",
+            "sizeField": null,
+            "sizeScale": "linear",
+            "heightField": null,
+            "heightScale": "linear",
+            "radiusField": null,
+            "radiusScale": "linear"
+          }
+        }
+      ],
+      "interactionConfig": {
+        "tooltip": {
+          "fieldsToShow": {
+            "mp4.geojson": [
+              { "name": "CD_MUN", "format": null },
+              { "name": "NM_MUN", "format": null },
+              { "name": "SIGLA_UF", "format": null },
+              { "name": "NUM_UBS", "format": null },
+              { "name": "UBS_por_1000_Habitantes", "format": null },
+              { "name": "N_HABITANTES", "format": null }
+            ],
+            "UBS.csv": [
+              { "name": "MUN", "format": null },
+              { "name": "LATITUDE", "format": null },
+              { "name": "LONGITUDE", "format": null }
+            ]
+          },
+          "compareMode": false,
+          "compareType": "absolute",
+          "enabled": true
+        },
+        "brush": {
+          "size": 0.5,
+          "enabled": false
+        },
+        "geocoder": {
+          "enabled": false
+        },
+        "coordinate": {
+          "enabled": false
+        }
+      },
+      "layerBlending": "normal",
+      "splitMaps": [],
+      "animationConfig": {
+        "currentTime": null,
+        "speed": 1
+      }
+    },
+    "mapState": {
+      "bearing": 24,
+      "dragRotate": true,
+      "latitude": -16.661731720376405,
+      "longitude": -59.746355952054195,
+      "pitch": 50,
+      "zoom": 3.42624808241369,
+      "isSplit": false
+    },
+    "mapStyle": {
+      "styleType": "dark",
+      "topLayerGroups": {},
+      "visibleLayerGroups": {
+        "border": true,
+        "building": true,
+        "label": true,
+        "land": true,
+        "road": true,
+        "water": true
+      },
+      "threeDBuildingColor": [
+        9.665468314072013,
+        17.18305478057247,
+        31.1442867897876
+      ],
+      "mapStyles": {}
+    }
+  }
+}
