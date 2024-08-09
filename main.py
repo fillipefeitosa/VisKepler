@@ -18,7 +18,6 @@ from lib.map_utils import create_kepler_map, get_dataId_from_config
 from data.load_data import read_geojsons
 
 # ---- Global Configuration
-# Populate the global config file
 global_config = {"maps": []}
 global_maps = {}
 
@@ -47,11 +46,17 @@ def create_route_function(map_config):
             elif isinstance(csv_data, str):
                 csv_data = pd.read_csv(csv_data).to_csv(index=False)
 
+        # Suporte a dados adicionais
+        additional_data = []
+        for key, value in data_ids.items():
+            if key not in ['geojson_file', 'csv_file']:
+                additional_data.append(global_maps.get(value))
+
         config = map_config["config"]
         print(f"Serving map for data_ids: {data_ids}")
 
         try:
-            kepler_html = create_kepler_map(geojson_data, config, csv_data)
+            kepler_html = create_kepler_map(geojson_data, config, csv_data, additional_data)
             return HTMLResponse(content=kepler_html, status_code=200)
         except Exception as e:
             return HTMLResponse(content=f"Erro ao criar o mapa: {e}", status_code=500)
