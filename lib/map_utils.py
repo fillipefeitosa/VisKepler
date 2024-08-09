@@ -26,31 +26,29 @@ def convert_numpy_types(data):
     else:
         return data
 
-def create_kepler_map(geojson_data, config, csv_data=None):
+def create_kepler_map(geojson_data, config, csv_data=None, additional_data=None):
     try:
         kepler_data = {}
         data_ids = get_dataId_from_config(config)
-
-        # Converta os dados para o formato adequado
-        if isinstance(geojson_data, gpd.GeoDataFrame):
-            geojson_data = convert_numpy_types(geojson_data)
-        if csv_data is not None and isinstance(csv_data, pd.DataFrame):
-            csv_data = convert_numpy_types(csv_data)
-
-        # Atribua os dados ao KeplerGL
-        if len(data_ids) == 1:
-            kepler_data[data_ids[0]] = geojson_data
-        elif len(data_ids) == 2 and csv_data is not None:
-            kepler_data[data_ids[0]] = geojson_data
-            kepler_data[data_ids[1]] = csv_data
-
-        print(f"Kepler data: {kepler_data}")
-        print(f"Kepler config: {config}")
+        
+        # Garantir que additional_data é uma lista válida
+        if additional_data is None:
+            additional_data = []
+        
+        for i, data_id in enumerate(data_ids):
+            if i == 0 and geojson_data is not None:
+                kepler_data[data_id] = geojson_data
+            elif i == 1 and csv_data is not None:
+                kepler_data[data_id] = csv_data
+            elif i >= 2 and i-2 < len(additional_data):
+                kepler_data[data_id] = additional_data[i-2]  # Adiciona dados adicionais
+            else:
+                logging.warning(f"Data not found for dataId {data_id}")
 
         kepler_map = KeplerGl(config=config, data=kepler_data)
-        
-        logging.info(f"Mapa KeplerGL criado com sucesso.")
+        logging.info("Mapa KeplerGL criado com sucesso.")
         return kepler_map._repr_html_()
     except Exception as e:
         logging.error(f"Falha ao criar o mapa KeplerGL: {e}")
         raise
+
