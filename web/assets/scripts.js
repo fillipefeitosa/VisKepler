@@ -44,15 +44,27 @@ function toggleSidebar() {
 }
 
 async function showMapInfo() {
-  try {
-    const mapId = document.getElementById('mapFrame').src.split('/').pop();
-    const response = await fetch(`/get_map_info/${mapId}`);
-    const mapInfo = await response.json();
+  console.log('showMapInfo function called'); // log para verificar se a função é chamada
 
-    document.querySelector('#infoModal h2').innerText = mapInfo.label;
-    document.querySelector('#infoModal p#map-description').innerText = mapInfo.description;
-    openModal();
+  try {
+      const mapId = document.getElementById('mapFrame').src.split('/').pop();
+      console.log(`mapId extracted: ${mapId}`);  // log para verificar o mapId
+
+      const response = await fetch(`/get_map_info/${mapId}`);
+      console.log(`Response status: ${response.status}`);  // log para verificar o status da resposta
+
+      if (!response.ok) {
+          throw new Error(`Failed to fetch map info: ${response.statusText}`);
+      }
+
+      const mapInfo = await response.json();
+      console.log(`Map info fetched: `, mapInfo);  // log para verificar o conteúdo retornado
+
+      document.querySelector('#infoModal h2').innerText = mapInfo.label;
+      document.querySelector('#infoModal p#map-description').innerText = mapInfo.description;
+
+      openModalHandler(document.getElementById('infoModal')); // Chama a função correta para abrir o modal
   } catch (error) {
-    console.error('Error fetching map info:', error);
+      console.error('Error fetching map info:', error);
   }
 }
