@@ -67,6 +67,9 @@ def populate_config():
     global global_maps
     global_maps = read_geojsons("./data")
 
+    # Adicionando o siteTitle ao global_config
+    global_config["siteTitle"] = user_config.get("siteTitle", "Título Padrão")
+
     for map_config in user_config["maps"]:
         data_ids = map_config["data_ids"]
         link = map_config["link"]
@@ -90,6 +93,7 @@ def populate_config():
                 "config": config,
             })
 
+
 populate_config()
 
 # ---- API ENTRYPOINT ----
@@ -108,12 +112,19 @@ async def get_config():
 
 @app.get("/get_map_info/{map_id}")
 async def get_map_info(map_id: str):
+    print(f"Received map_id: {map_id}")  # Log para verificar o mapId recebido
+
     for map in global_config["maps"]:
         if 'geojson_file' in map["data_ids"] and map["data_ids"]["geojson_file"].split('.')[0] == map_id:
+            print(f"Found map info for geojson_file: {map['data_ids']['geojson_file']}")  # Log para verificar o arquivo geojson
             return JSONResponse(map)
         elif 'csv_file' in map["data_ids"] and map["data_ids"]["csv_file"].split('.')[0] == map_id:
+            print(f"Found map info for csv_file: {map['data_ids']['csv_file']}")  # Log para verificar o arquivo csv
             return JSONResponse(map)
+
+    print(f"Map info not found for map_id: {map_id}")  # Log se o mapId não foi encontrado
     raise HTTPException(status_code=404, detail="Map not found")
+
 
 # ---- Dynamic routes for each map configuration found
 for map_config in global_config["maps"]:
