@@ -1,4 +1,3 @@
-/* Estilos existentes */
 body, html {
   height: 100%;
   margin: 0;
@@ -112,21 +111,22 @@ li a:hover {
   fill: currentColor;
 }
 
-/* Estilos para alinhar o botão de informação */
 .map-control {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 202px; /* altura botão */
+  right: 12.5px; /* posição do botão no lado direito */
   display: flex;
   flex-direction: column;
+  z-index: 1000; 
 }
 
 .map-control .info-button {
-  position: relative;
-  margin: 0;
+  margin: 10px 0 0 0; 
   padding: 0;
-  width: 32px; /* Ajuste o tamanho conforme necessário */
-  height: 32px; /* Ajuste o tamanho conforme necessário */
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  border-radius: 0; 
 }
 
 .map-control .info-button svg {
@@ -135,7 +135,14 @@ li a:hover {
   fill: currentColor;
 }
 
-/* Modal styles */
+
+.map-control .info-button svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Estilo modal */
 .modal {
   display: none;
   position: fixed;
@@ -145,29 +152,41 @@ li a:hover {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0, 0, 0, 0.4); 
   padding-top: 60px;
 }
 
 .modal-content {
-  background-color: #fefefe;
-  margin: 5% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
+  background-color: #2a3b47; 
+  color: #d1d5db; /* cor do texto, cinza claro */
+  margin: 5% auto; /*  modal centralizado */
+  padding: 20px; /* espaçamento interno */
+  border: 1px solid #3b4a58; 
+  width: 80%; 
+  border-radius: 6px; 
+}
+
+.modal-content h2 {
+  color: #ffffff; /* cor do título */
+  margin-bottom: 15px; 
+  font-size: 18px;
+}
+
+.modal-content p {
+  color: #d1d5db; /* cor do texto do parágrafo */
+  font-size: 14px; 
 }
 
 .close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+  color: #6c7680; 
+  float: right; 
+  font-size: 28px; 
+  font-weight: bold; 
 }
 
 .close:hover,
 .close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+  color: #ffffff; 
+  text-decoration: none; 
+  cursor: pointer; 
 }
