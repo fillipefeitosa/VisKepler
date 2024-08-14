@@ -29,26 +29,29 @@ def convert_numpy_types(data):
 def create_kepler_map(geojson_data, config, csv_data=None, additional_data=None):
     try:
         kepler_data = {}
-        data_ids = get_dataId_from_config(config)
         
-        # Garantir que additional_data é uma lista válida
-        if additional_data is None:
-            additional_data = []
-        
-        for i, data_id in enumerate(data_ids):
-            if i == 0 and geojson_data is not None:
-                kepler_data[data_id] = geojson_data
-            elif i == 1 and csv_data is not None:
-                kepler_data[data_id] = csv_data
-            elif i >= 2 and i-2 < len(additional_data):
-                kepler_data[data_id] = additional_data[i-2]  # Adiciona dados adicionais
+        # Processar as camadas de acordo com a configuração
+        for layer in config["config"]["visState"]["layers"]:
+            data_id = layer["config"]["dataId"]
+            
+            if data_id in geojson_data:
+                kepler_data[data_id] = geojson_data[data_id]
+                logging.info(f"GeoJSON data added for {data_id}")
+            elif data_id in csv_data:
+                kepler_data[data_id] = csv_data[data_id]
+                logging.info(f"CSV data added for {data_id}")
             else:
-                logging.warning(f"Data not found for dataId {data_id}")
+                logging.warning(f"No data found for {data_id}. Check if the data is correctly loaded.")
+        
+        # Garantir que pelo menos uma camada foi adicionada
+        if not kepler_data:
+            raise ValueError("Nenhuma camada GeoJSON ou CSV foi adicionada. Verifique os dados e a configuração.")
 
+        # Criar o mapa com as camadas processadas
         kepler_map = KeplerGl(config=config, data=kepler_data)
         logging.info("Mapa KeplerGL criado com sucesso.")
         return kepler_map._repr_html_()
+    
     except Exception as e:
         logging.error(f"Falha ao criar o mapa KeplerGL: {e}")
         raise
-
