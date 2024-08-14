@@ -7,6 +7,7 @@ import geopandas as gpd
 import pandas as pd
 import os
 import json
+import logging
 
 # ---- Kepler Configurations ----
 from config.shared import read_configs, load_user_config
@@ -26,39 +27,40 @@ user_config = load_user_config()
 
 def create_route_function(map_config):
     async def route_function():
-        data_ids = map_config["data_ids"]
-        geojson_data = global_maps.get(data_ids.get('geojson_file'))
-        csv_data = global_maps.get(data_ids.get('csv_file')) if 'csv_file' in data_ids else None
+        # Usa global_maps diretamente como fonte de todos os dados
+        geojson_data = {}
+        csv_data = {}
 
-        if geojson_data is None and csv_data is None:
+        # Verificação para garantir que global_maps não está vazio
+        if not global_maps:
             return HTMLResponse(content="Missing data file", status_code=404)
 
-        # Convert data to the appropriate format
-        if geojson_data is not None:
-            if isinstance(geojson_data, gpd.GeoDataFrame):
-                geojson_data = geojson_data.to_json()
-            elif isinstance(geojson_data, str):
-                geojson_data = gpd.read_file(geojson_data).to_json()
-
-        if csv_data is not None:
-            if isinstance(csv_data, pd.DataFrame):
-                csv_data = csv_data.to_csv(index=False)
-            elif isinstance(csv_data, str):
-                csv_data = pd.read_csv(csv_data).to_csv(index=False)
-
-        # Suporte a dados adicionais
-        additional_data = []
-        for key, value in data_ids.items():
-            if key not in ['geojson_file', 'csv_file']:
-                additional_data.append(global_maps.get(value))
-
         config = map_config["config"]
-        print(f"Serving map for data_ids: {data_ids}")
+        if not config:
+            return HTMLResponse(content="Configuração do mapa não encontrada", status_code=500)
+
+        # Realizar as conversões necessárias para GeoJSON e CSV
+        for key, value in global_maps.items():
+            if isinstance(value, gpd.GeoDataFrame):
+                geojson_data[key] = json.loads(value.to_json())
+            elif isinstance(value, pd.DataFrame):
+                csv_data[key] = value
+            elif isinstance(value, str):
+                try:
+                    if key.endswith('.geojson'):
+                        geojson_data[key] = json.loads(gpd.read_file(value).to_json())
+                    elif key.endswith('.csv'):
+                        csv_data[key] = pd.read_csv(value)
+                except Exception as e:
+                    logging.error(f"Erro ao carregar arquivo {key}: {e}")
+                    global_maps[key] = None
 
         try:
-            kepler_html = create_kepler_map(geojson_data, config, csv_data, additional_data)
+            # Passa os dados processados para create_kepler_map
+            kepler_html = create_kepler_map(geojson_data, config, csv_data)
             return HTMLResponse(content=kepler_html, status_code=200)
         except Exception as e:
+            logging.error(f"Falha ao criar o mapa KeplerGL: {e}")
             return HTMLResponse(content=f"Erro ao criar o mapa: {e}", status_code=500)
 
     return route_function
@@ -93,7 +95,6 @@ def populate_config():
                 "config": config,
             })
 
-
 populate_config()
 
 # ---- API ENTRYPOINT ----
@@ -124,7 +125,6 @@ async def get_map_info(map_id: str):
 
     print(f"Map info not found for map_id: {map_id}")  # Log se o mapId não foi encontrado
     raise HTTPException(status_code=404, detail="Map not found")
-
 
 # ---- Dynamic routes for each map configuration found
 for map_config in global_config["maps"]:
