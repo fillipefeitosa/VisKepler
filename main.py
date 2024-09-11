@@ -18,28 +18,37 @@ from lib.map_utils import create_kepler_map, get_dataId_from_config
 # ---- Map Loader
 from data.load_data import read_geojsons
 
-# ---- Global Configuration
+# ---- Global Configuration ----
 global_config = {"maps": []}
 global_maps = {}
 
-# Carregar configuração do arquivo config.json
+# Load configuration from config.json file
 user_config = load_user_config()
+
+# Data cache to avoid repeated loads
+def cache_data():
+    global global_maps
+    if not global_maps:
+        logging.info("Populating data in cache")
+        global_maps = read_geojsons("./data")
+    else:
+        logging.info("Using cached data")
 
 def create_route_function(map_config):
     async def route_function():
-        # Usa global_maps diretamente como fonte de todos os dados
+        cache_data()  # Ensure the data is in cache
         geojson_data = {}
         csv_data = {}
 
-        # Verificação para garantir que global_maps não está vazio
+        # Check if cache contains data
         if not global_maps:
             return HTMLResponse(content="Missing data file", status_code=404)
 
         config = map_config["config"]
         if not config:
-            return HTMLResponse(content="Configuração do mapa não encontrada", status_code=500)
+            return HTMLResponse(content="Map configuration not found", status_code=500)
 
-        # Realizar as conversões necessárias para GeoJSON e CSV
+        # Convert GeoJSON and CSV
         for key, value in global_maps.items():
             if isinstance(value, gpd.GeoDataFrame):
                 geojson_data[key] = json.loads(value.to_json())
@@ -52,25 +61,24 @@ def create_route_function(map_config):
                     elif key.endswith('.csv'):
                         csv_data[key] = pd.read_csv(value)
                 except Exception as e:
-                    logging.error(f"Erro ao carregar arquivo {key}: {e}")
+                    logging.error(f"Error loading file {key}: {e}")
                     global_maps[key] = None
 
         try:
-            # Passa os dados processados para create_kepler_map
+            # Pass processed data to create_kepler_map
             kepler_html = create_kepler_map(geojson_data, config, csv_data)
             return HTMLResponse(content=kepler_html, status_code=200)
         except Exception as e:
-            logging.error(f"Falha ao criar o mapa KeplerGL: {e}")
-            return HTMLResponse(content=f"Erro ao criar o mapa: {e}", status_code=500)
+            logging.error(f"Failed to create KeplerGL map: {e}")
+            return HTMLResponse(content=f"Error creating map: {e}", status_code=500)
 
     return route_function
 
 def populate_config():
-    global global_maps
-    global_maps = read_geojsons("./data")
+    cache_data()  # Populate the data cache
 
-    # Adicionando o siteTitle ao global_config
-    global_config["siteTitle"] = user_config.get("siteTitle", "Título Padrão")
+    # Adding siteTitle to global_config
+    global_config["siteTitle"] = user_config.get("siteTitle", "Default Title")
 
     for map_config in user_config["maps"]:
         data_ids = map_config["data_ids"]
@@ -98,7 +106,6 @@ def populate_config():
 populate_config()
 
 # ---- API ENTRYPOINT ----
-
 app = FastAPI()
 
 app.mount("/assets", StaticFiles(directory="web/assets"), name="assets")
@@ -113,17 +120,17 @@ async def get_config():
 
 @app.get("/get_map_info/{map_id}")
 async def get_map_info(map_id: str):
-    print(f"Received map_id: {map_id}")  # Log para verificar o mapId recebido
+    print(f"Received map_id: {map_id}")  # Log to check the received mapId
 
     for map in global_config["maps"]:
         if 'geojson_file' in map["data_ids"] and map["data_ids"]["geojson_file"].split('.')[0] == map_id:
-            print(f"Found map info for geojson_file: {map['data_ids']['geojson_file']}")  # Log para verificar o arquivo geojson
+            print(f"Found map info for geojson_file: {map['data_ids']['geojson_file']}")  # Log to check the geojson file
             return JSONResponse(map)
         elif 'csv_file' in map["data_ids"] and map["data_ids"]["csv_file"].split('.')[0] == map_id:
-            print(f"Found map info for csv_file: {map['data_ids']['csv_file']}")  # Log para verificar o arquivo csv
+            print(f"Found map info for csv_file: {map['data_ids']['csv_file']}")  # Log to check the csv file
             return JSONResponse(map)
 
-    print(f"Map info not found for map_id: {map_id}")  # Log se o mapId não foi encontrado
+    print(f"Map info not found for map_id: {map_id}")  # Log if the mapId wasn't found
     raise HTTPException(status_code=404, detail="Map not found")
 
 # ---- Dynamic routes for each map configuration found
