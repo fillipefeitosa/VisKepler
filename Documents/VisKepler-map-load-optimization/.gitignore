@@ -1,0 +1,36 @@
+*.log
+*.tmp
+*.ini
+*.dat
+*.blf
+*.regtrans-ms
+NTUSER.*
+/Ambiente de Impressão/
+/Ambiente de Rede/
+/AppData/
+/Contacts/
+/Desktop/
+/Downloads/
+/Favorites/
+/Links/
+/Music/
+/Pictures/
+/Saved Games/
+/Searches/
+/Videos/
+/OneDrive/
+/venv/
+__pycache__/
+.DS_Store
+
+# Python
+*.ipynb_checkpoints/
+*.virtual_documents/
+*.jupyter/
+*.vscode/
+*.conda/
+*.cargo/
+*.rustup/
+*.matplotlib/
+*.cache/
+.env
