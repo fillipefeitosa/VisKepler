@@ -4,31 +4,6 @@
   "maps": [
     {
       "data_ids": {
-        "csv_file": "UBS.csv",
-        "geojson_file": "BRMALHAUBS.geojson"
-      },
-      "label": "Mapa do Brasil UBSs",
-      "link": "/BRMALHAUBS",
-      "description": "Este mapa mostra as unidades básicas de saúde [UBS] na área coberta pelo arquivo geojson BRMALHAUBS."
-    },
-    {
-      "data_ids": {
-        "csv_file": "ARCMANAUS.csv"
-      },
-      "label": "Demandas UBSs Manaus",
-      "link": "/ARCMANAUS",
-      "description": "Este mapa mostra as demandas de unidades básicas de saúde [UBS] na área de cobertura de Manaus."
-    },
-    {
-      "data_ids": {
-        "csv_file": "ARCRIODEJANEIRO.csv"
-      },
-      "label": "Demandas UBSs Rio de Janeiro",
-      "link": "/ARCRIODEJANEIRO",
-      "description": "Este mapa mostra as demandas de unidades básicas de saúde [UBS] na área de cobertura do Rio de Janeiro."
-    },
-    {
-      "data_ids": {
         "csv_file": "DESLOCAMENTOUK.csv"
       },
       "label": "Padrão de deslocamento diário na Inglaterra e no País de Gales",
