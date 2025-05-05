@@ -1,12 +1,21 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from starlette.routing import Route, Mount
 import geopandas as gpd
 import pandas as pd
 import os
 import json
+
+import glob, time
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+WEB_DIR = os.path.join(CURRENT_DIR, "web")
+ASSETS_DIR = os.path.join(WEB_DIR, "assets")
+
+templates = Jinja2Templates(directory="templates")
 
 # ---- Kepler Configurations ----
 from config.shared import read_configs, load_user_config
@@ -23,6 +32,14 @@ global_maps = {}
 
 # Load user configuration from the config.json file
 user_config = load_user_config()
+
+
+
+def clean_temp(max_age_hours=24):
+    now = time.time()
+    for f in glob.glob("./data/temp/knn_*.csv") + glob.glob("./config/temp/knn_*.json"):
+        if now - os.path.getmtime(f) > max_age_hours*3600:
+            os.remove(f)
 
 # Function to create a dynamic route for each map configuration
 def create_route_function(map_config):
@@ -70,8 +87,8 @@ def create_route_function(map_config):
 # Function to populate the global configuration and load map data
 def populate_config():
    global global_maps
-   global_maps = read_geojsons("./data")
-
+   global_maps = read_geojsons("./data", "./data/temp", "./config/temp")
+   
    # Adding siteTitle to global_config from user configuration
    global_config["siteTitle"] = user_config.get("siteTitle", "Default Title")
 
@@ -105,13 +122,21 @@ populate_config()
 
 # ---- API ENTRYPOINT ----
 
+templates = Jinja2Templates(directory="web/templates")
+
 app = FastAPI()
 
-app.mount("/assets", StaticFiles(directory="web/assets"), name="assets")
+app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 
-@app.get("/")
-async def root():
-   return FileResponse("./web/index.html")
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "site_title": global_config["siteTitle"]
+        }
+    )
 
 # Endpoint to get the global configuration
 @app.get("/get_config")
@@ -159,5 +184,81 @@ async def get_routes():
             )
     return {"routes": routes}
 
-if __name__ == "__main__":
-   uvicorn.run(app, host="0.0.0.0", port=8050, reload=True)
+@app.get("/consulta_base", response_class=HTMLResponse)
+def show_consulta_base(request: Request):
+    return templates.TemplateResponse("consulta_base.html", {"request": request})
+
+
+@app.get("/consulta_base/mapa", response_class=HTMLResponse)
+async def show_consulta_base_mapa(
+    request: Request,
+    uf: str,
+    municipio: str,
+    tipo: str
+):
+    # Lógica para carregar CSV + CONFIG do mapa gerado
+    map_id = f"knn_{time.strftime('%Y%m%d')}_latest"
+    # Ajuste para capturar o arquivo mais recente com base nos parâmetros, se necessário
+
+    # Caminhos
+    data_path = f"./data/temp/{map_id}.csv"
+    config_path = f"./config/temp/{map_id}.json"
+
+    if not os.path.exists(data_path) or not os.path.exists(config_path):
+        return HTMLResponse("Mapa não encontrado", status_code=404)
+
+    # Leitura dos dados
+    df = pd.read_csv(data_path)
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+
+    # Aqui o ajuste: passa o CSV como csv_data
+    kepler_html = create_kepler_map(None, config, csv_data=df)
+    if isinstance(kepler_html, (bytes, bytearray)):
+        kepler_html = kepler_html.decode("utf-8")
+
+    return templates.TemplateResponse("map.html", {
+        "request": request,
+        "map_label": f"Mapa de Alocação – {municipio}/{uf}",
+        "kepler_html": kepler_html
+    })
+
+CONFIG_TEMP_DIR = "./config/temp"
+
+# endpoint /refresh_config
+@app.get("/refresh_config")
+async def refresh_config(map_id: str = Query(...)):
+    filepath = os.path.join(CONFIG_TEMP_DIR, f"{map_id}.json")
+    if not os.path.exists(filepath):
+        return JSONResponse(status_code=404, content={"error": "Config not found"})
+    
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        data["status"] = "ok"
+        return JSONResponse(content=data)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.get("/map/{map_id}", response_class=HTMLResponse)
+async def render_map(request: Request, map_id: str):
+    data_path = os.path.join("./data/temp", f"{map_id}.csv")
+    config_path = os.path.join("./config/temp", f"{map_id}.json")
+
+    if not os.path.exists(data_path) or not os.path.exists(config_path):
+        return HTMLResponse("Mapa não encontrado", status_code=404)
+
+    df = pd.read_csv(data_path)
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+
+    # Garante que o DataFrame do CSV seja passado como csv_data
+    kepler_html = create_kepler_map(None, config, csv_data=df)
+    if isinstance(kepler_html, (bytes, bytearray)):
+        kepler_html = kepler_html.decode("utf-8")
+    
+    return templates.TemplateResponse("map.html", {
+        "request": request,
+        "map_label": config.get("label", f"Mapa {map_id}"),
+        "kepler_html": kepler_html
+    })
