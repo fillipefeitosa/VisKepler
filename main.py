@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException, Request, Query
+from fastapi import FastAPI, HTTPException, Request, Query, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,6 +10,7 @@ import os
 import json
 
 import glob, time
+import requests 
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 WEB_DIR = os.path.join(CURRENT_DIR, "web")
@@ -32,6 +33,45 @@ global_maps = {}
 
 # Load user configuration from the config.json file
 user_config = load_user_config()
+
+DATA_TEMP_DIR   = "./data/temp"
+CONFIG_TEMP_DIR = "./config/temp"
+os.makedirs(DATA_TEMP_DIR,   exist_ok=True)
+os.makedirs(CONFIG_TEMP_DIR, exist_ok=True)
+
+### -----------------------------------------------------------------
+### helper: grava arquivos recebidos e cria rota em tempo‑real
+### -----------------------------------------------------------------
+def _register_uploaded_map(map_id: str, csv_fname: str, cfg_fname: str, cfg: dict):
+    link = f"/map/{map_id}"
+
+    # 1) grava/corrige config.json em disco
+    cfg_json_path = os.path.join(CONFIG_TEMP_DIR, "config.json")
+    try:
+        with open(cfg_json_path, "r", encoding="utf-8") as f:
+            cfg_file = json.load(f)
+    except Exception:
+        cfg_file = {"siteTitle": "VisKepler", "maps": []}
+
+    if not any(m["link"] == link for m in cfg_file["maps"]):
+        cfg_file["maps"].append({
+            "data_ids": {"csv_file": csv_fname},
+            "label":    cfg.get("label", map_id),
+            "link":     link,
+            "description": cfg.get("description", "")
+        })
+        with open(cfg_json_path, "w", encoding="utf-8") as f:
+            json.dump(cfg_file, f, ensure_ascii=False, indent=2)
+
+    # 2) adiciona em memória (+ rota dinâmica)
+    global_config["maps"].append({
+        "data_ids": {"csv_file": csv_fname},
+        "link": link,
+        "label": cfg.get("label", map_id),
+        "description": cfg.get("description", ""),
+        "config": cfg
+    })
+    app.add_api_route(link, create_route_function(global_config["maps"][-1]), methods=["GET"])
 
 
 
@@ -239,6 +279,34 @@ async def refresh_config(map_id: str = Query(...)):
         return JSONResponse(content=data)
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+    
+@app.post("/api/upload_map")
+async def api_upload_map(
+    map_id:   str        = Form(...),
+    csv_file: UploadFile = File(...),
+    cfg_file: UploadFile = File(...)
+):
+    try:
+        csv_fname = f"{map_id}.csv"
+        cfg_fname = f"{map_id}.json"
+
+        csv_path = os.path.join(DATA_TEMP_DIR,   csv_fname)
+        cfg_path = os.path.join(CONFIG_TEMP_DIR, cfg_fname)
+
+        with open(csv_path, "wb") as f:
+            f.write(await csv_file.read())
+
+        cfg_bytes = await cfg_file.read()
+        with open(cfg_path, "wb") as f:
+            f.write(cfg_bytes)
+        cfg_json = json.loads(cfg_bytes.decode())
+
+        _register_uploaded_map(map_id, csv_fname, cfg_fname, cfg_json)
+        return {"status": "ok", "link": f"/map/{map_id}"}
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 @app.get("/map/{map_id}", response_class=HTMLResponse)
 async def render_map(request: Request, map_id: str):
